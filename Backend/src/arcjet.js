@@ -5,6 +5,9 @@ const arcjetKey = process.env.ARCJET_KEY;
 const arcjetMode = process.env.ARCJET_MODE === 'DRY_RUN' ? 'DRY_RUN' : 'LIVE';
 
 if (!arcjetKey) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ARCJET_KEY must be set in production');
+ }
   console.warn('ARCJET_KEY is not set; Arcjet protection is disabled.');
 }
 

@@ -83,8 +83,15 @@ export function attachWebSocketServer(server) {
     const wss = new WebSocketServer({ noServer: true, path: '/ws', maxPayload: 1024 * 1024 });
 
     server.on('upgrade', async (req, socket, head) => {
-        const { pathname } = new URL(req.url, `http://${req.headers.host}`);
-
+        let pathname;
+   try {
+       const host = req.headers.host ?? 'localhost';
+       pathname = new URL(req.url ?? '/', `http://${host}`).pathname;
+    } catch {
+        socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
+        socket.destroy();
+        return;
+   }
         if (pathname !== '/ws') {
             socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
             socket.destroy();
