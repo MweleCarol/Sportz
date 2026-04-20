@@ -1,3 +1,6 @@
+import AgentAPI from 'apminsight';
+AgentAPI.config();
+
 import express from 'express';
 import { matchRouter } from './routes/matches.js';
 import {attachWebSocketServer} from "./ws/server.js";
@@ -11,13 +14,12 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 const server = http.createServer(app);
 
+app.use(securityMiddleware());
 app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Hello from the Express server!');
 });
-
-app.use(securityMiddleware());
 
 app.use('/matches', matchRouter);
 app.use('/matches/:id/commentary', commentaryRouter);
